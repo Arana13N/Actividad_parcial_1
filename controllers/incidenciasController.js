@@ -1,3 +1,51 @@
+const {
+  esTextoValido,
+  validarPrioridad,
+  normalizarPrioridad,
+} = require('../utils/helpers');
+
+const incidencias = [];
+
+let siguienteId = 1;
+
+function registrarIncidencia(req, res) {
+  const { titulo, descripcion, prioridad } = req.body;
+
+  if (!esTextoValido(titulo)) {
+    return res.status(400).json({
+      mensaje: 'El campo titulo es obligatorio',
+    });
+  }
+
+  if (!esTextoValido(descripcion)) {
+    return res.status(400).json({
+      mensaje: 'El campo descripcion es obligatorio',
+    });
+  }
+
+  if (!validarPrioridad(prioridad)) {
+    return res.status(400).json({
+      mensaje: 'La prioridad debe ser Alta, Media o Baja',
+    });
+  }
+
+  const nuevaIncidencia = {
+    id: siguienteId++,
+    titulo: titulo.trim(),
+    descripcion: descripcion.trim(),
+    prioridad: normalizarPrioridad(prioridad),
+    estado: 'Pendiente',
+  };
+
+  incidencias.push(nuevaIncidencia);
+
+  return res.status(201).json(nuevaIncidencia);
+}
+
+function listarIncidencias(req, res) {
+  return res.status(200).json(incidencias);
+}
+
 function buscarIncidenciaPorId(req, res) {
   const id = Number(req.params.id);
 
@@ -159,3 +207,13 @@ function clasificarIncidencia(req, res) {
     clasificacion,
   });
 }
+
+module.exports = {
+  registrarIncidencia,
+  listarIncidencias,
+  buscarIncidenciaPorId,
+  cambiarEstadoIncidencia,
+  eliminarIncidencia,
+  obtenerEstadisticas,
+  clasificarIncidencia,
+};
