@@ -9,7 +9,7 @@ const incidencias = [];
 let siguienteId = 1;
 
 function registrarIncidencia(req, res) {
-  const { titulo, descripcion, prioridad } = req.body;
+  const { titulo, descripcion, empleado, prioridad } = req.body;
 
   if (!esTextoValido(titulo)) {
     return res.status(400).json({
@@ -28,11 +28,17 @@ function registrarIncidencia(req, res) {
       mensaje: 'La prioridad debe ser Alta, Media o Baja',
     });
   }
+  if (!esTextoValido(descripcion)) {
+    return res.status(400).json({
+      mensaje: 'El campo descripcion es obligatorio',
+    });
+  }
 
   const nuevaIncidencia = {
     id: siguienteId++,
     titulo: titulo.trim(),
     descripcion: descripcion.trim(),
+    empleado: empleado.trim(),
     prioridad: normalizarPrioridad(prioridad),
     estado: 'Pendiente',
   };
